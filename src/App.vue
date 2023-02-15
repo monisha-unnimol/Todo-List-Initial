@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import TodoList from './components/TodoList.vue'
 
 </script>
 
 <template>
-  <h1>
-    Todo List
-  </h1>
+  <TodoList />
 </template>
 
 <style>
@@ -31,5 +30,40 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+.container {
+  width: 500px;
+  margin: 30px;
+  overflow: auto;
+  border: 1px solid;
+  padding: 30px;
+  border-radius: 5px;
+}
+
+.button {
+  display: inline-block;
+  background: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button-block {
+  display: block;
+  width: 100%
 }
 </style>
