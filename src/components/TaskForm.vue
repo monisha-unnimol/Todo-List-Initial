@@ -1,7 +1,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { router } from '@/router';
 
+import Header from './Header.vue';
 import type { Task } from '@/types/task';
 import { useTaskStore } from '@/store/tasks';
 
@@ -9,7 +11,7 @@ const name = ref('');
 const date = ref('');
 const reminder = ref(false);
 
-const { editTaskDetails } = useTaskStore();
+const { tasks, editTaskDetails, addTask, updateTask } = useTaskStore();
 
 const emit = defineEmits(['create-task', 'update-task'])
 const isEditFlow = ref(Boolean(editTaskDetails?.id))
@@ -31,23 +33,36 @@ const onCreateSubmit = (e) => {
     date: date.value,
     reminder: reminder.value
   }
-  emit('create-task', newTask);
+  // emit('create-task', newTask);
+  console.log('created')
+  addTask(newTask);
+  router.back()
 }
 
 const onEditSubmit = (e) => {
   e.preventDefault();
   const updatedTask = {
-    id: editTaskDetails?.id,
+    id: editTaskDetails?.id || '',
     title: name.value,
     date: date.value,
     reminder: reminder.value
   };
-  emit('update-task', updatedTask)
+  // emit('update-task', updatedTask)
+  updateTask(updatedTask);
+  router.back()
 }
+
+const onCancel = () => {
+  if (tasks.length === 0) {
+    alert('You have no tasks to list. Create a task')
+  }
+  router.back()
+};
 </script>
 
 <template>
-  <form class="add-form" @="{ submit: isEditFlow ? onEditSubmit : onCreateSubmit }">
+  <form class="add-form container" @="{ submit: isEditFlow ? onEditSubmit : onCreateSubmit }">
+    <Header :title="isEditFlow ? 'Edit task' : 'Create Task'" button-label="Cancel" @button-click="onCancel" />
     <div class="form-control">
       <label for="name">
         Task Name
