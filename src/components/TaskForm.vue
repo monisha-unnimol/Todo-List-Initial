@@ -1,29 +1,28 @@
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { router } from '@/router';
+import { useRoute } from 'vue-router';
 
 import Header from './Header.vue';
-import type { Task } from '@/types/task';
 import { useTaskStore } from '@/store/tasks';
 
 const name = ref('');
 const date = ref('');
 const reminder = ref(false);
+const taskId = ref<string>(useRoute().params.id?.toString());
+const isEditFlow = computed(() => Boolean(taskId.value));
 
-const { tasks, editTaskDetails, addTask, updateTask } = useTaskStore();
-
-const emit = defineEmits(['create-task', 'update-task'])
-const isEditFlow = ref(Boolean(editTaskDetails?.id))
+const { addTask, updateTask, getTaskById } = useTaskStore();
 
 onMounted(() => {
   if (isEditFlow.value) {
-      name.value = editTaskDetails?.title || '';
-      date.value = editTaskDetails?.date || '';
-      reminder.value = editTaskDetails?.reminder || false;
-    }
+    const task = getTaskById(taskId.value);
+    name.value = task?.title || '';
+    date.value = task?.date || '';
+    reminder.value = task?.reminder || false;
   }
-)
+})
 
 const onCreateSubmit = (e) => {
   e.preventDefault();
@@ -33,8 +32,6 @@ const onCreateSubmit = (e) => {
     date: date.value,
     reminder: reminder.value
   }
-  // emit('create-task', newTask);
-  console.log('created')
   addTask(newTask);
   router.back()
 }
@@ -42,45 +39,43 @@ const onCreateSubmit = (e) => {
 const onEditSubmit = (e) => {
   e.preventDefault();
   const updatedTask = {
-    id: editTaskDetails?.id || '',
+    id: taskId.value || '',
     title: name.value,
     date: date.value,
     reminder: reminder.value
   };
-  // emit('update-task', updatedTask)
   updateTask(updatedTask);
   router.back()
 }
 
 const onCancel = () => {
-  if (tasks.length === 0) {
-    alert('You have no tasks to list. Create a task')
-  }
   router.back()
 };
 </script>
 
 <template>
-  <form class="add-form container" @="{ submit: isEditFlow ? onEditSubmit : onCreateSubmit }">
+  <div class="add-form container">
     <Header :title="isEditFlow ? 'Edit task' : 'Create Task'" button-label="Cancel" @button-click="onCancel" />
-    <div class="form-control">
-      <label for="name">
-        Task Name
-      </label>
-      <input type="text" id="name" placeholder="Enter task name" v-model="name" required />
-    </div>
-    <div class="form-control">
-      <label for="date">
-        Date
-      </label>
-      <input type="date" id="date" placeholder="Enter task date" v-model="date" required />
-    </div>
-    <div class="form-control form-control-check">
-      <label for="reminder">Set Reminder?</label>
-      <input type="checkbox" id="reminder" v-model="reminder" />
-    </div>
-    <button class="button button-block" type="submit">{{ isEditFlow ? 'Save Task': 'Create Task' }}</button>
-  </form>
+    <form @="{ submit: isEditFlow ? onEditSubmit : onCreateSubmit }">
+      <div class="form-control">
+        <label for="name">
+          Task Name
+        </label>
+        <input type="text" id="name" placeholder="Enter task name" v-model="name" required />
+      </div>
+      <div class="form-control">
+        <label for="date">
+          Date
+        </label>
+        <input type="date" id="date" placeholder="Enter task date" v-model="date" required />
+      </div>
+      <div class="form-control form-control-check">
+        <label for="reminder">Set Reminder?</label>
+        <input type="checkbox" id="reminder" v-model="reminder" />
+      </div>
+      <button class="button button-block" type="submit">{{ isEditFlow? 'Save Task': 'Create Task' }}</button>
+    </form>
+  </div>
 </template>
 
 <style scoped>
