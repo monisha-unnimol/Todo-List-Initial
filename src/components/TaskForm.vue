@@ -9,7 +9,7 @@ const date = ref('');
 const reminder = ref(false);
 
 const props = defineProps<{
-  editTaskDetails?: Task
+  editTaskDetails?: Task | null
 }>()
 
 const emit = defineEmits(['create-task', 'update-task'])
@@ -24,7 +24,7 @@ onMounted(() => {
   }
 )
 
-const onCreateSubmit = (e) => {
+const onCreateSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const newTask = {
     id: Math.random().toString(36).substr(2, 10),
@@ -35,7 +35,7 @@ const onCreateSubmit = (e) => {
   emit('create-task', newTask);
 }
 
-const onEditSubmit = (e) => {
+const onEditSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const updatedTask = {
     id: props.editTaskDetails?.id,

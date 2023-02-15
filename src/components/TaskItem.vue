@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { Task } from '../types/task';
 
 defineProps<{
   task: Task
 }>();
 
-defineEmits(['delete-task', 'edit']);
+defineEmits(['delete-task', 'edit-task']);
 
 </script>
 
 <template>
-  <div :class="[task.reminder ? 'reminder' : '', 'task']" @click.stop="$emit('edit', task)">
+  <div :class="[task.reminder ? 'reminder' : '', 'task']" @click.stop="$emit('edit-task', task)">
     <div class="task-container">
       <div class="details">
         <h4>{{ task.title }}</h4>
