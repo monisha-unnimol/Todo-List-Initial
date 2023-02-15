@@ -24,7 +24,7 @@ onMounted(() => {
   }
 })
 
-const onCreateSubmit = (e) => {
+const onCreateSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const newTask = {
     id: Math.random().toString(36).substr(2, 10),
@@ -36,7 +36,7 @@ const onCreateSubmit = (e) => {
   router.back()
 }
 
-const onEditSubmit = (e) => {
+const onEditSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const updatedTask = {
     id: taskId.value || '',
