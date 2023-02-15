@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
+
+import type { Task } from '@/types/task';
 
 import Header from './Header.vue';
 import TaskItem from './TaskItem.vue';
 import TaskForm from './TaskForm.vue';
-
-import type { Task } from '@/types/task';
 
 const tasks = ref<Task[]>([{
   id: '1',
@@ -16,16 +16,13 @@ const tasks = ref<Task[]>([{
 
 const noOfTasks = computed(() => tasks.value.length)
 const showForm = ref(false);
-const editTaskDetails = ref<Task>();
+const editTaskDetails = ref<Task | null>();
 
 const toggleForm = () => {
   showForm.value = !showForm.value
-  if (editTaskDetails.value?.id && !showForm.value) {
-    editTaskDetails.value = undefined;
-  }
 };
 
-const editTaskClick = (task: Task) => {
+const onEditTask = (task: Task) => {
   editTaskDetails.value = task;
   toggleForm();
 }; 
@@ -45,12 +42,10 @@ const onDeleteTask = (id: string) => {
   tasks.value = tasks.value.filter((task) => task.id !== id)
 };
 
-watchEffect(() => console.log('watchEffect', noOfTasks.value))
-watch(noOfTasks, () => {
-  if (noOfTasks.value === 0) {
-    showForm.value = true
+watchEffect(() => {
+  if (editTaskDetails.value?.id && !showForm.value) {
+    editTaskDetails.value = null;
   }
-  console.log('watch', noOfTasks.value)
 })
 
 </script>
@@ -65,16 +60,21 @@ watch(noOfTasks, () => {
         :editTaskDetails="editTaskDetails"
       />
     </div>
+    <div v-if="!showForm && !noOfTasks" class="tasks-empty">
+      You do not have any tasks...
+    </div>
     <TaskItem
       v-for="task in tasks"
       :key="task.id"
       :task="task"
-      @edit="editTaskClick"
+      @edit-task="onEditTask"
       @delete-task="onDeleteTask"
     />
   </div>
 </template>
 
 <style scoped>
-
+.tasks-empty {
+  margin-top: 30px;
+}
 </style>
