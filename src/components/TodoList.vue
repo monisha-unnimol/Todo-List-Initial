@@ -6,63 +6,35 @@ import TaskItem from './TaskItem.vue';
 import TaskForm from './TaskForm.vue';
 
 import type { Task } from '@/types/task';
+import { useTaskStore } from '@/store/tasks';
 
-const tasks = ref<Task[]>([{
-  id: '1',
-  title: 'Task 1',
-  date: '2023-03-18',
-  reminder: false
-}]);
-
+const taskStore = useTaskStore();
+const tasks = ref<Task[]>(taskStore.tasks);
 const noOfTasks = computed(() => tasks.value.length)
-const showForm = ref(false);
-const editTaskDetails = ref<Task>();
-
-const toggleForm = () => {
-  showForm.value = !showForm.value
-  if (editTaskDetails.value?.id && !showForm.value) {
-    editTaskDetails.value = undefined;
-  }
-};
 
 const editTaskClick = (task: Task) => {
-  editTaskDetails.value = task;
-  toggleForm();
+  taskStore.editTaskDetails = task;
+  taskStore.toggleForm();
 }; 
 
-const onCreateTask = (newTask:  Task) => {
-  tasks.value = [...tasks.value, newTask]
-  toggleForm();
-};
-
-const onUpdateTask = (newTask: Task) => {
-  const index = tasks.value.findIndex((task) => task.id === newTask.id);
-  tasks.value[index] = newTask;
-  toggleForm();
-};
-
-const onDeleteTask = (id: string) => {
-  tasks.value = tasks.value.filter((task) => task.id !== id)
-};
-
-watchEffect(() => console.log('watchEffect', noOfTasks.value))
-watch(noOfTasks, () => {
+watch(noOfTasks, () => console.log('watch', noOfTasks.value))
+watchEffect(() => {
   if (noOfTasks.value === 0) {
-    showForm.value = true
+    taskStore.showForm = true
   }
-  console.log('watch', noOfTasks.value)
+  console.log('watchEffect', noOfTasks.value)
 })
+watchEffect(() => tasks.value = taskStore.tasks);
 
 </script>
 
 <template>
   <div class="container">
-    <Header name="Monisha" :showForm="showForm" :toggleForm="toggleForm" />
-    <div v-if="showForm">
+    <Header name="Monisha" />
+    <div v-if="taskStore.showForm">
       <TaskForm
-        @create-task="onCreateTask"
-        @update-task="onUpdateTask"
-        :editTaskDetails="editTaskDetails"
+        @create-task="taskStore.addTask"
+        @update-task="taskStore.updateTask"
       />
     </div>
     <TaskItem
@@ -70,7 +42,7 @@ watch(noOfTasks, () => {
       :key="task.id"
       :task="task"
       @edit="editTaskClick"
-      @delete-task="onDeleteTask"
+      @delete-task="taskStore.removeTask"
     />
   </div>
 </template>

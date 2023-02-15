@@ -3,23 +3,22 @@
 import { onMounted, ref } from 'vue';
 
 import type { Task } from '@/types/task';
+import { useTaskStore } from '@/store/tasks';
 
 const name = ref('');
 const date = ref('');
 const reminder = ref(false);
 
-const props = defineProps<{
-  editTaskDetails?: Task
-}>()
+const { editTaskDetails } = useTaskStore();
 
 const emit = defineEmits(['create-task', 'update-task'])
-const isEditFlow = ref(Boolean(props.editTaskDetails?.id))
+const isEditFlow = ref(Boolean(editTaskDetails?.id))
 
 onMounted(() => {
   if (isEditFlow.value) {
-      name.value = props.editTaskDetails?.title || '';
-      date.value = props.editTaskDetails?.date || '';
-      reminder.value = props.editTaskDetails?.reminder || false;
+      name.value = editTaskDetails?.title || '';
+      date.value = editTaskDetails?.date || '';
+      reminder.value = editTaskDetails?.reminder || false;
     }
   }
 )
@@ -38,7 +37,7 @@ const onCreateSubmit = (e) => {
 const onEditSubmit = (e) => {
   e.preventDefault();
   const updatedTask = {
-    id: props.editTaskDetails?.id,
+    id: editTaskDetails?.id,
     title: name.value,
     date: date.value,
     reminder: reminder.value
