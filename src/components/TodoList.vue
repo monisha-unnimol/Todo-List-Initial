@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 
 import Header from './Header.vue';
 import TaskItem from './TaskItem.vue';
@@ -16,13 +16,10 @@ const editTaskClick = (task: Task) => {
   taskStore.editTaskDetails = task;
   taskStore.toggleForm();
 }; 
-
-watch(noOfTasks, () => console.log('watch', noOfTasks.value))
 watchEffect(() => {
-  if (noOfTasks.value === 0) {
-    taskStore.showForm = true
+  if (taskStore.editTaskDetails?.id && !taskStore.showForm) {
+    taskStore.editTaskDetails = null;
   }
-  console.log('watchEffect', noOfTasks.value)
 })
 watchEffect(() => tasks.value = taskStore.tasks);
 
@@ -37,16 +34,21 @@ watchEffect(() => tasks.value = taskStore.tasks);
         @update-task="taskStore.updateTask"
       />
     </div>
+    <div v-if="!taskStore.showForm && !noOfTasks" class="tasks-empty">
+      You do not have any tasks...
+    </div>
     <TaskItem
       v-for="task in tasks"
       :key="task.id"
       :task="task"
-      @edit="editTaskClick"
+      @edit-task="editTaskClick"
       @delete-task="taskStore.removeTask"
     />
   </div>
 </template>
 
 <style scoped>
-
+.tasks-empty {
+  margin-top: 30px;
+}
 </style>

@@ -23,7 +23,7 @@ onMounted(() => {
   }
 )
 
-const onCreateSubmit = (e) => {
+const onCreateSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const newTask = {
     id: Math.random().toString(36).substr(2, 10),
@@ -34,7 +34,7 @@ const onCreateSubmit = (e) => {
   emit('create-task', newTask);
 }
 
-const onEditSubmit = (e) => {
+const onEditSubmit = (e: MouseEvent) => {
   e.preventDefault();
   const updatedTask = {
     id: editTaskDetails?.id,
