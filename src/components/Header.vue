@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { router } from '@/router';
 import { useTaskStore } from '@/store/tasks';
 
 
 withDefaults(defineProps<{
-  name: string,
+  title?: string,
+  buttonLabel?: string
 }>(), {
-  name: 'Vinay',
+  title: 'Hello, Vinay',
+  buttonLabel: 'Add Task'
 })
 
 // defineProps({
@@ -15,16 +18,16 @@ withDefaults(defineProps<{
 //   }
 // })
 
-const taskStore = useTaskStore();
+defineEmits(['button-click'])
 
 </script>
 
 <template>
   <header>
     <h1>
-      Hello, {{ name }}
+      {{ title }}
     </h1>
-    <button class="button" @click.stop="taskStore.toggleForm">{{ taskStore.showForm ? 'Close' : 'Add Task' }}</button>
+    <button class="button" @click.stop="$emit('button-click')">{{ buttonLabel }}</button>
   </header>
 </template>
 

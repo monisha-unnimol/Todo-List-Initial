@@ -8,31 +8,25 @@ export const useTaskStore = defineStore(
   /* {
   state: () => {
     return {
-      tasks: [
-        { id: "1", title: "Task 1", date: "2023-03-18", reminder: false },
-      ] as Task[],
-      showForm: false,
-      editTaskDetails: {} as Task | null,
-    };
+      tasks: [{ id: '1', title: 'Task 1', date: '2023-03-18', reminder: false }] as Task[]
+    }
   },
   getters: {
+    getTaskById() {
+      return (id: string) => this.tasks.find((task) => task.id === id)
+    },
     reminders(): Task[] {
       return this.tasks.filter((task) => task.reminder);
-    },
+    }
   },
   actions: {
-    toggleForm() {
-      this.showForm = !this.showForm;
-    },
     addTask(task: Task) {
-      this.tasks = [...this.tasks, task];
-      this.toggleForm();
+      this.tasks = [...this.tasks, task]
     },
     removeTask(id: string) {
       this.tasks = this.tasks.filter((task) => task.id !== id);
     },
     updateTask(newTask: Task) {
-      this.toggleForm();
       const index = this.tasks.findIndex((task) => task.id === newTask.id);
       this.tasks[index] = newTask;
     }, 
