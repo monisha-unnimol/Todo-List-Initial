@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { useTaskStore } from '@/store/tasks';
+
 
 withDefaults(defineProps<{
   name: string,
-  showForm: boolean,
-  toggleForm: () => void
 }>(), {
   name: 'Vinay',
-  showForm: false
 })
 
 // defineProps({
@@ -16,6 +15,8 @@ withDefaults(defineProps<{
 //   }
 // })
 
+const taskStore = useTaskStore();
+
 </script>
 
 <template>
@@ -23,7 +24,7 @@ withDefaults(defineProps<{
     <h1>
       Hello, {{ name }}
     </h1>
-    <button class="button" @click.stop="toggleForm">{{ showForm ? 'Close' : 'Add Task' }}</button>
+    <button class="button" @click.stop="taskStore.toggleForm">{{ taskStore.showForm ? 'Close' : 'Add Task' }}</button>
   </header>
 </template>
 
