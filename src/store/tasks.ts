@@ -1,7 +1,11 @@
 import type { Task } from "@/types/task";
 import { defineStore } from "pinia";
+import { computed, ref } from "vue";
 
-export const useTaskStore = defineStore("tasks", {
+export const useTaskStore = defineStore(
+  "tasks",
+  /** Options API format */
+  /* {
   state: () => {
     return {
       tasks: [
@@ -31,6 +35,45 @@ export const useTaskStore = defineStore("tasks", {
       this.toggleForm();
       const index = this.tasks.findIndex((task) => task.id === newTask.id);
       this.tasks[index] = newTask;
-    },
-  },
-});
+    }, 
+  }
+  });,*/
+
+  () => {
+    const tasks = ref<Task[]>([
+      { id: "1", title: "Task 1", date: "2023-03-18", reminder: false },
+    ]);
+    const showForm = ref(false);
+    const editTaskDetails = ref<Task | null>();
+
+    const reminders = computed(() =>
+      tasks.value.filter((task) => task.reminder)
+    );
+
+    const toggleForm = () => {
+      showForm.value = !showForm.value;
+    };
+    const addTask = (task: Task) => {
+      tasks.value = [...tasks.value, task];
+      toggleForm();
+    };
+    const removeTask = (id: string) => {
+      tasks.value = tasks.value.filter((task) => task.id !== id);
+    };
+    const updateTask = (newTask: Task) => {
+      toggleForm();
+      const index = tasks.value.findIndex((task) => task.id === newTask.id);
+      tasks.value[index] = newTask;
+    };
+    return {
+      tasks,
+      showForm,
+      editTaskDetails,
+      reminders,
+      toggleForm,
+      addTask,
+      removeTask,
+      updateTask,
+    };
+  }
+);
